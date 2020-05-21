@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+###############################################################################
+# If you use PhysiCell in your project, please cite PhysiCell and the version #
+# number, such as below:                                                      #
+#                                                                             #
+# We implemented and solved the model using PhysiCell (Version x.y.z) [1].    #
+#                                                                             #
+# [1] A Ghaffarizadeh, R Heiland, SH Friedman, SM Mumenthaler, and P Macklin, #
+#     PhysiCell: an Open Source Physics-Based Cell Simulator for Multicellu-  #
+#     lar Systems, PLoS Comput. Biol. 14(2): e1005991, 2018                   #
+#     DOI: 10.1371/journal.pcbi.1005991                                       #
+#                                                                             #
+# See VERSION.txt or call get_PhysiCell_version() to get the current version  #
+#     x.y.z. Call display_citations() to get detailed information on all cite-#
+#     able software used in your PhysiCell application.                       #
+#                                                                             #
+# Because PhysiCell extensively uses BioFVM, we suggest you also cite BioFVM  #
+#     as below:                                                               #
+#                                                                             #
+# We implemented and solved the model using PhysiCell (Version x.y.z) [1],    #
+# with BioFVM [2] to solve the transport equations.                           #
+#                                                                             #
+# [1] A Ghaffarizadeh, R Heiland, SH Friedman, SM Mumenthaler, and P Macklin, #
+#     PhysiCell: an Open Source Physics-Based Cell Simulator for Multicellu-  #
+#     lar Systems, PLoS Comput. Biol. 14(2): e1005991, 2018                   #
+#     DOI: 10.1371/journal.pcbi.1005991                                       #
+#                                                                             #
+# [2] A Ghaffarizadeh, SH Friedman, and P Macklin, BioFVM: an efficient para- #
+#     llelized diffusive transport solver for 3-D biological simulations,     #
+#     Bioinformatics 32(8): 1256-8, 2016. DOI: 10.1093/bioinformatics/btv730  #
+#                                                                             #
+###############################################################################
+#                                                                             #
+# BSD 3-Clause License (see https://opensource.org/licenses/BSD-3-Clause)     #
+#                                                                             #
+# Copyright (c) 2015-2018, Paul Macklin and the PhysiCell Project             #
+# All rights reserved.                                                        #
+#                                                                             #
+# Redistribution and use in source and binary forms, with or without          #
+# modification, are permitted provided that the following conditions are met: #
+#                                                                             #
+# 1. Redistributions of source code must retain the above copyright notice,   #
+# this list of conditions and the following disclaimer.                       #
+#                                                                             #
+# 2. Redistributions in binary form must reproduce the above copyright        #
+# notice, this list of conditions and the following disclaimer in the         #
+# documentation and/or other materials provided with the distribution.        #
+#                                                                             #
+# 3. Neither the name of the copyright holder nor the names of its            #
+# contributors may be used to endorse or promote products derived from this   #
+# software without specific prior written permission.                         #
+#                                                                             #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" #
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE   #
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE  #
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE   #
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR         #
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF        #
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS    #
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN     #
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)     #
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  #
+# POSSIBILITY OF SUCH DAMAGE.                                                 #
+#                                                                             #
+###############################################################################
+*/
+--> 
+
+<!--
+<user_details />
+-->
+
+<PhysiCell_settings version="1.6.1">
+	<domain>
+		<x_min>-500</x_min>
+		<x_max>500</x_max>
+		<y_min>-500</y_min>
+		<y_max>500</y_max>
+		<z_min>-10</z_min>
+		<z_max>10</z_max>
+		<dx>20</dx>
+		<dy>20</dy>
+		<dz>20</dz>
+		<use_2D>true</use_2D>
+	</domain>
+	
+	<overall>
+		<max_time units="min">3000</max_time> <!-- 5 days * 24 h * 60 min -->
+		<time_units>min</time_units>
+		<space_units>micron</space_units>
+	
+		<dt_diffusion units="min">0.01</dt_diffusion>
+		<dt_mechanics units="min">0.1</dt_mechanics>
+		<dt_phenotype units="min">6</dt_phenotype>	
+	</overall>
+	
+	<parallel>
+		<omp_num_threads>4</omp_num_threads>
+	</parallel> 
+	
+	<save>
+		<folder>output</folder> <!-- use . for root --> 
+
+		<full_data>
+			<interval units="min">1440</interval>
+			<enable>true</enable>
+		</full_data>
+		
+		<SVG>
+			<interval units="min">30</interval>
+			<enable>true</enable>
+		</SVG>
+		
+		<legacy_data>
+			<enable>false</enable>
+		</legacy_data>
+	</save>
+	
+	<microenvironment_setup>
+		<variable name="oxygen" units="dimensionless" ID="0">
+			<physical_parameter_set>
+				<diffusion_coefficient units="micron^2/min">100000.0</diffusion_coefficient>
+				<decay_rate units="1/min">0.1</decay_rate>  
+			</physical_parameter_set>
+			<initial_condition units="dimensionless">38.0</initial_condition>
+			<Dirichlet_boundary_condition units="dimensionless" enabled="true">38.0</Dirichlet_boundary_condition>
+		</variable>
+		<!-- Dirichlet_boundary_condition was true and 1-->
+		
+		<variable name="epithelial" units="dimensionless" ID="1">
+			<physical_parameter_set>
+				<diffusion_coefficient units="micron^2/min">100000.0</diffusion_coefficient>
+				<decay_rate units="1/min">1</decay_rate>  
+			</physical_parameter_set>
+			<initial_condition units="dimensionless">0.0</initial_condition>
+			<Dirichlet_boundary_condition units="dimensionless" enabled="false">1.0</Dirichlet_boundary_condition>
+		</variable>
+
+		<variable name="mesenchymal" units="dimensionless" ID="2">
+			<physical_parameter_set>
+				<diffusion_coefficient units="micron^2/min">100000.0</diffusion_coefficient>
+				<decay_rate units="1/min">1</decay_rate>  
+			</physical_parameter_set>
+			<initial_condition units="dimensionless">0.0</initial_condition>
+			<Dirichlet_boundary_condition units="dimensionless" enabled="false">1.0</Dirichlet_boundary_condition>
+		</variable>
+
+<!-- 
+		<variable name="scream" units="dimensionless" ID="0">
+			<physical_parameter_set>
+				<diffusion_coefficient units="micron^2/min">100000.0</diffusion_coefficient>
+				<decay_rate units="1/min">0.1</decay_rate>  
+			</physical_parameter_set>
+			<initial_condition units="dimensionless">0</initial_condition>
+			<Dirichlet_boundary_condition units="dimensionless" enabled="false">1.0</Dirichlet_boundary_condition>
+		</variable>
+--> 
+		
+		<options>
+			<calculate_gradients>true</calculate_gradients>
+			<track_internalized_substrates_in_each_agent>false</track_internalized_substrates_in_each_agent>
+			<!-- not yet supported --> 
+			<initial_condition type="matlab" enabled="false">
+				<filename>./config/initial.mat</filename>
+			</initial_condition>
+			<!-- not yet supported --> 
+			<dirichlet_nodes type="matlab" enabled="false">
+				<filename>./config/dirichlet.mat</filename>
+			</dirichlet_nodes>
+		</options>
+	</microenvironment_setup>
+	
+	
+	<cell_setup>
+		
+		<defaults>
+			<cycle name="live" ID="">
+				<transition_rates>
+					<transition_rate from="0" to="0" fixed_duration="false" units="1/min"></transition_rate>
+				</transition_rates>
+			</cycle>
+			<death name="apoptosis" ID="">
+				<rate></rate>
+				<parameters /> 
+			</death> 
+			<death name="apoptosis" ID="">
+				<rate></rate>
+				<parameters /> 
+			</death> 
+		</defaults> 
+	
+		<cycle_defaults>
+		
+		</cycle_defaults>
+	
+		<cell_definitions>
+			<cell_definition name="stem_like" ID="0">
+				<phenotype>
+					<cycle>
+						<transition_rates>
+						</transition_rates> 
+					</cycle>
+					<death></death>
+					<geometry></geometry> 
+					<volume></volume>
+					<motility></motility>
+					<secretion></secretion>
+					<mechanics></mechanics> 
+				</phenotype>
+			</cell_definition>
+			
+		</cell_definitions>
+	
+		<options>
+			<cycle_model>live</cycle_model>
+			<apoptosis_duration units="min">516</apoptosis_duration>
+		</options> 
+	
+		<custom_data>
+			<damage units="dimensionless">0.0</damage>
+		</custom_data> 
+		
+		<initial_condition>
+		</initial_condition> 
+	
+	</cell_setup>
+	
+	<user_parameters>
+		<random_seed type="int" units="dimensionless">0</random_seed> 
+		<!-- example parameters from the template --> 
+		
+		<!-- stem_like_cell --> 
+		<stem_like_initial_count type="int" units="none" 
+			description="initial number of stem_like">0</stem_like_initial_count>
+		<stem_like_speed type="double" units="micron/min" 
+			description="stem_like migration speed">.1</stem_like_speed>
+		<stem_like_birth_rate type="double" units="1/min"  
+			description="stem_like birth rate">.0007</stem_like_birth_rate>
+		<stem_like_death_rate type="double" units="1/min"
+			description="stem_like death rate">.000007</stem_like_death_rate>
+
+
+		
+		<!-- epithelial -->
+		<epithelial_initial_count type="int" units="none"
+			description="number of Epithelial">250</epithelial_initial_count>
+		<epithelial_speed type="double" units="micron/min" 
+			description="Epithelial migration speed">0.2</epithelial_speed> 
+		<epithelial_snap_time type="double" hidden="true">720</epithelial_snap_time>
+		<epithelial_motility_bias type="double" units="none"
+			description="Epithelial migration bias (0 = Brownian)">0.5</epithelial_motility_bias>
+		<epithelial_birth_rate type="double" units="1/min"  
+			description="mesenchymal birth rate">0.0009259259259</epithelial_birth_rate>
+		<epithelial_apoptosis_rate type="double" units="1/min">0.0</epithelial_apoptosis_rate>
+		<epithelial_relative_adhesion type="double" units="dimensionless">0.05</epithelial_relative_adhesion>
+		<epithelial_relative_repulsion type="double" units="dimensionless">0.8</epithelial_relative_repulsion>
+		 
+		
+		<elastic_coefficient type="double" units="1/min">0.05</elastic_coefficient>		
+		<receptor type="double" units="dimensionless">0.6</receptor>
+
+
+		<!-- mesenchymal --> 
+		<mesenchymal_initial_count type="int" units="none"
+			description="number of Mesenchymal">0</mesenchymal_initial_count>
+		<mesenchymal_birth_rate type="double" units="1/min"  
+			description="mesenchymal birth rate">0.0006344444445</mesenchymal_birth_rate>
+		<mesenchymal_death_rate type="double" units="1/min"  
+			description="mesenchymal birth rate">0</mesenchymal_death_rate>
+
+
+		<mesenchymal_speed type="double" units="micron/min" 
+			description="Mesenchymal migration speed">4</mesenchymal_speed>
+		<mesenchymal_strength type="double" units="dimensionless" 
+			description="Mesenchymal battle stregth">10</mesenchymal_strength> 
+		<mesenchymal_motility_bias type="double" units="none" 
+			description="Mesenchymal migration bias (0 = Brownian)">0.5</mesenchymal_motility_bias> 
+
+
+		<!--
+		<mesenchymal_relative_adhesion type="double" units="dimensionless">0</mesenchymal_relative_adhesion>
+		<mesenchymal_relative_repulsion type="double" units="dimensionless">5</mesenchymal_relative_repulsion>
+		-->
+		
+
+
+		<!-- custom mechanics --> 
+		<max_elastic_displacement type="double" units="micron">50.0</max_elastic_displacement>
+
+		<!-- attachment parameters --> 
+		<attachment_receptor_threshold type="double" units="dimensionless">0.1</attachment_receptor_threshold>
+		<max_attachment_distance type="double" units="micron">18.0</max_attachment_distance>
+		<min_attachment_distance type="double" units="micron">14.0</min_attachment_distance>
+
+	</user_parameters>
+	
+</PhysiCell_settings>
